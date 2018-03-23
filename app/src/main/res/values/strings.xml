@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Flip Image</string>
+    <string name="flip_vert">Flip Vertical</string>
+    <string name="flip_horiz">Flip Horizontal</string>
+    <string name="gallery">Gallery</string>
+    <string name="select_image">Select an Image \n to Flip</string>
+    <string name="save">Save</string>
+    <string name="image_saved">Image Saved</string>
+    <string name="view_image">View Image</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_verti"
+        android:title="@string/flip_vert"
+        android:icon="@drawable/ic_swap_vert"
+        app:showAsAction="ifRoom"
+        android:enabled="true"/>
+    <item android:id="@+id/action_horiz"
+        android:title="@string/flip_horiz"
+        android:icon="@drawable/ic_swap_horiz"
+        app:showAsAction="ifRoom"
+        android:enabled="true"/>
+    <item android:id="@+id/action_gallery"
+        android:title="@string/gallery"
+        android:icon="@drawable/ic_gallery"
+        app:showAsAction="ifRoom"
+        android:enabled="true"/>
+
+</menu>
