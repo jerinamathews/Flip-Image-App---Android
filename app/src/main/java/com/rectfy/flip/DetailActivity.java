@@ -27,9 +27,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.adclient.android.sdk.nativeads.view.SmartBannerAdView;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class DetailActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private AdView mAdView;
     private Vibrator vib;
     private boolean hapticFeed;
 
@@ -59,7 +57,44 @@ public class DetailActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         setContentView(R.layout.activity_detail);
+        if(getSharedPreferences("Flip_Pref",MODE_PRIVATE).getBoolean("remove_ad",false)){
+            remove_ad();
+        }
+        else {
 
+            final SmartBannerAdView smartBannerAdView =
+                    findViewById(R.id.show_banner_ad_view);
+            smartBannerAdView.setListener(
+                    new SmartBannerAdView.SmartBannerAdViewListener() {
+                        @Override
+                        public void onBannerLoading(SmartBannerAdView banner, String message) {
+                            Log.d("TestApp", "onBannerLoading : loaded = " +
+                                    banner.isLoaded());
+                        }
+
+                        @Override
+                        public void onBannerRefreshed(SmartBannerAdView banned, String
+                                message) {
+                            Log.d("TestApp", "onBannerRefreshed");
+                        }
+
+                        @Override
+                        public void onBannerImpression(SmartBannerAdView banner) {
+                            Log.d("TestApp", "onBannerImpression");
+                        }
+
+                        @Override
+                        public void onBannerFailed(SmartBannerAdView banner, String message) {
+                            Log.d("TestApp", "onBannerFailed msg:" + message);
+                        }
+
+                        @Override
+                        public void onBannerClicked(SmartBannerAdView banner) {
+                            Log.d("TestApp", "onBannerClicked");
+                        }
+                    });
+            smartBannerAdView.load(this);
+        }
 
         vib = (Vibrator)getSystemService(VIBRATOR_SERVICE);
         SharedPreferences pref = getSharedPreferences("Flip_Pref",MODE_PRIVATE);
@@ -78,10 +113,6 @@ public class DetailActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(pos);
-
-        mAdView = findViewById(R.id.viewPageBanner);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("B5C6779005B7324A3BB20FCA3B71F16B").build();
-        mAdView.loadAd(adRequest);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -104,6 +135,11 @@ public class DetailActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void remove_ad() {
+        SmartBannerAdView ad = findViewById(R.id.show_banner_ad_view);
+        ad.setVisibility(View.GONE);
     }
 
     public void goBack(View view) {

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -46,7 +47,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.MobileAds;
+
+import com.adclient.android.sdk.nativeads.view.SmartBannerAdView;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchaseHistoryResponseListener;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,7 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PurchasesUpdatedListener {
 
     private static final int GALLERY = 10;
     private static final int CAMERA = 11;
@@ -105,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +132,89 @@ public class MainActivity extends AppCompatActivity {
             perm=true;
 
         }
+
+
+        final BillingClient mBillingClient;
+        mBillingClient = BillingClient.newBuilder(this).setListener(this).build();
+        mBillingClient.startConnection(new BillingClientStateListener() {
+            @Override
+            public void onBillingSetupFinished(@BillingClient.BillingResponse int billingResponseCode) {
+                mBillingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP,
+                        new PurchaseHistoryResponseListener() {
+                            @Override
+                            public void onPurchaseHistoryResponse(@BillingClient.BillingResponse int responseCode,
+                                                                  List<Purchase> purchasesList) {
+                                Log.e("check", "here " + responseCode);
+                                if (responseCode == BillingClient.BillingResponse.OK
+                                        && purchasesList != null) {
+                                    for (Purchase purchase : purchasesList) {
+                                        Log.e("check", "here1");
+                                        if (purchase.getSku().equals("remove_ad_flip")) {
+                                            SharedPreferences.Editor pref = getSharedPreferences("Flip_Pref", MODE_PRIVATE).edit();
+                                            pref.putBoolean("remove_ad", true);
+                                            pref.apply();
+                                            remove_ad();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onBillingServiceDisconnected() {
+
+            }
+        });
+
+
+        if(getSharedPreferences("Flip_Pref",MODE_PRIVATE).getBoolean("remove_ad",false)){
+            remove_ad();
+        }
+        else {
+            SharedPreferences pref = getSharedPreferences("Flip_Pref",MODE_PRIVATE);
+            int adcount = pref.getInt("save_ad_count",0);
+            if(adcount>7 || adcount==0){
+                pref.edit().putInt("save_ad_count",1).apply();
+                showRemoveAd();
+            }else if(adcount!=-1) {
+                pref.edit().putInt("save_ad_count",adcount+1).apply();
+            }
+            final SmartBannerAdView smartBannerAdView =
+                    findViewById(R.id.main_ad_view);
+            smartBannerAdView.setListener(new SmartBannerAdView.SmartBannerAdViewListener() {
+                @Override
+                public void onBannerLoading(SmartBannerAdView banner, String message) {
+                    Log.d("App", "onBannerLoading : loaded = " +
+                            banner.isLoaded());
+                }
+
+                @Override
+                public void onBannerRefreshed(SmartBannerAdView banned, String
+                        message) {
+                    Log.d("App", "onBannerRefreshed");
+                }
+
+                @Override
+                public void onBannerImpression(SmartBannerAdView banner) {
+                    Log.d("App", "onBannerImpression");
+                }
+
+                @Override
+                public void onBannerFailed(SmartBannerAdView banner, String message) {
+                    Log.d("App", "onBannerFailed msg:" + message);
+                }
+
+                @Override
+                public void onBannerClicked(SmartBannerAdView banner) {
+                    Log.d("App", "onBannerClicked");
+                }
+            });
+            smartBannerAdView.load(this);
+        }
+
         SharedPreferences pref = getSharedPreferences("Flip_Pref",MODE_PRIVATE);
         hapticFeed = pref.getBoolean("hapticFeed",true);
 
@@ -128,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
         imageview = findViewById(R.id.pic);
         add_image_text = findViewById(R.id.add_pic_text);
 
-        MobileAds.initialize(this, "ca-app-pub-3534792353435863~8198722054");
 
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -199,6 +295,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void showRemoveAd() {
+        if(!getSharedPreferences("Flip_Pref",MODE_PRIVATE).getBoolean("remove_ad",false)){
+            SharedPreferences pref = getSharedPreferences("Flip_Pref",MODE_PRIVATE);
+            int adcount = pref.getInt("save_ad_count",0);
+            if(adcount>7){
+                pref.edit().putInt("save_ad_count",0).apply();
+                showRemoveAd();
+            }else if(adcount!=-1) {
+                pref.edit().putInt("save_ad_count",adcount+1).apply();
+            }
+
+            String APP_TITLE ="Flip Image";
+            final Boolean[] first = {true};
+            final Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.remove_ad);
+            final Button yes = dialog.findViewById(R.id.rate_yes);
+            final Button no = dialog.findViewById(R.id.rate_no);
+            final TextView content = dialog.findViewById(R.id.rate_text);
+            content.setText("Is the Ads so annoying? Remove the ads now.");
+            yes.setText("Yes!");
+            no.setText("Cancel");
+
+            yes.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    inAppPurchase();
+                    dialog.dismiss();
+                }
+            });
+
+            no.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "You can remove ads anytime from the options.", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+
+
+            dialog.show();
+        }
+
+    }
+
     // Shared intent method
     private void onSharedIntent() {
         Intent receiverdIntent = getIntent();// Receive intent
@@ -556,6 +696,15 @@ public class MainActivity extends AppCompatActivity {
                     pref.edit().putBoolean("hapticFeed",hapticFeed).apply();
                 }
             });
+
+            TextView removeAds = layout.findViewById(R.id.removeAd);
+            removeAds.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    inAppPurchase();
+                }
+            });
+
             TextView rate = layout.findViewById(R.id.rate_us);
             rate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -576,4 +725,103 @@ public class MainActivity extends AppCompatActivity {
         pDialog.show();
     }
 
+    public void inAppPurchase(){
+
+
+
+
+        final BillingClient mBillingClient;
+        mBillingClient = BillingClient.newBuilder(this).setListener(this).build();
+        mBillingClient.startConnection(new BillingClientStateListener() {
+            @Override
+            public void onBillingSetupFinished(@BillingClient.BillingResponse int billingResponseCode) {
+//                mBillingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP,
+//                        new PurchaseHistoryResponseListener() {
+//                            @Override
+//                            public void onPurchaseHistoryResponse(@BillingClient.BillingResponse int responseCode,
+//                                                                  List<Purchase> purchasesList) {
+//                                if (responseCode == BillingClient.BillingResponse.OK
+//                                        && purchasesList != null) {
+//                                    for (Purchase purchase : purchasesList) {
+//                                        Log.e("purchase ", purchase.getPurchaseToken()+" "+purchase.getOrderId()+" "+purchase.getPackageName());
+//                                        mBillingClient.consumeAsync(purchase.getPurchaseToken(), new ConsumeResponseListener() {
+//                                            @Override
+//                                            public void onConsumeResponse(int responseCode, String purchaseToken) {
+//                                                Toast.makeText(MainActivity.this, "Consumed", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        });
+//                                    }
+//                                }
+//                            }
+//                        });
+
+                if (billingResponseCode == BillingClient.BillingResponse.OK) {
+                    // The billing client is ready. You can query purchases here.
+                    List skuList = new ArrayList<> ();
+                    skuList.add("remove_ad_flip");
+                    SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+                    params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+                    mBillingClient.querySkuDetailsAsync(params.build(),
+                            new SkuDetailsResponseListener() {
+                                @Override
+                                public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
+                                    if (responseCode == BillingClient.BillingResponse.OK
+                                            && skuDetailsList != null) {
+                                        for (SkuDetails skuDetails : skuDetailsList) {
+                                            String sku = skuDetails.getSku();
+                                            String price = skuDetails.getPrice();
+                                            Log.e("buy ",sku+" "+price);
+                                            if ("remove_ad_flip".equals(sku)) {
+                                                BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+                                                        .setSku(sku)
+                                                        .setType(BillingClient.SkuType.INAPP)
+                                                        .build();
+                                                int resCode = mBillingClient.launchBillingFlow(MainActivity.this,flowParams);
+                                                Log.e("res,",resCode+" "+flowParams.toString());
+
+
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onBillingServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+                Log.e("service", "disconnected");
+            }
+        });
+    }
+
+
+    @Override
+    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
+        if (responseCode == BillingClient.BillingResponse.OK
+                && purchases != null) {
+            for (Purchase purchase : purchases) {
+                if(purchase.getSku().equals("remove_ad_flip")) {
+                    SharedPreferences.Editor pref = getSharedPreferences("Flip_Pref",MODE_PRIVATE).edit();
+                    pref.putBoolean("remove_ad",true);
+                    pref.apply();
+                    Toast.makeText(this, "Thank you", Toast.LENGTH_SHORT).show();
+                    remove_ad();
+                    break;
+                }
+            }
+        } else if (responseCode == BillingClient.BillingResponse.USER_CANCELED) {
+            Log.e("error", "cancelled");
+            Toast.makeText(this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.e("error", responseCode+" ");
+            Toast.makeText(this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public  void remove_ad(){
+        SmartBannerAdView ad = findViewById(R.id.main_ad_view);
+        ad.setVisibility(View.GONE);
+    }
 }

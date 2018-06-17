@@ -6,60 +6,63 @@
     android:layout_height="match_parent"
     tools:context="com.rectfy.flip.MainActivity">
 
-    <View
-        android:id="@+id/background"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+
+    <com.adclient.android.sdk.nativeads.view.SmartBannerAdView
+        android:id="@+id/main_ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:adPlacementKey="8c2cfc50ef9309ce30db532165776817"
+        app:adServerUrl="https://appservestar.com/"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:refreshInterval="30"
+        app:smartBannerAdSize="SMART_BANNER_FULL_WIDTHx50" />
+
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
-        android:onClick="saveImage"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:onClick="saveImage"
+        android:padding="8dp"
         android:src="@drawable/ic_save"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="32dp" />
+        app:layout_constraintTop_toBottomOf="@+id/main_ad_view" />
 
     <ImageButton
-        android:id="@+id/clearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:onClick="clearImage"
         android:padding="8dp"
         android:src="@drawable/ic_autorenew"
         app:layout_constraintBottom_toTopOf="@+id/pic"
         app:layout_constraintStart_toEndOf="@+id/more_aption"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/main_ad_view" />
 
     <ImageButton
         android:id="@+id/more_aption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
-        android:onClick="showMenu"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:onClick="showMenu"
+        android:padding="8dp"
         android:src="@drawable/ic_more"
         app:layout_constraintBottom_toTopOf="@+id/pic"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/main_ad_view" />
 
     <TextView
         android:id="@+id/add_pic_text"
@@ -125,7 +128,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/rotateRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -145,7 +147,9 @@
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         app:menu="@menu/bottom_bar_items"
-        android:layout_marginBottom="8dp"
+        android:background="#222F4B"
+        android:layout_marginBottom="0dp"
+        android:paddingBottom="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

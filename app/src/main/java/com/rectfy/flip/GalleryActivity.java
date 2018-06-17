@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
+import com.adclient.android.sdk.nativeads.view.SmartBannerAdView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +24,6 @@ public class GalleryActivity extends AppCompatActivity {
     GalleryAdapter adapter;
     private static final String IMAGE_DIRECTORY = "/Flip pic";
     List<ImageModel> imgList = new ArrayList<>();
-    private AdView mAdView;
     private String path;
 
 
@@ -67,14 +66,50 @@ public class GalleryActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         setContentView(R.layout.activity_gallery);
+
+        if(getSharedPreferences("Flip_Pref",MODE_PRIVATE).getBoolean("remove_ad",false)){
+            remove_ad();
+        }
+        else {
+
+            final SmartBannerAdView smartBannerAdView =
+                    findViewById(R.id.gallery_banner_ad_view);
+            smartBannerAdView.setListener(
+                    new SmartBannerAdView.SmartBannerAdViewListener() {
+                        @Override
+                        public void onBannerLoading(SmartBannerAdView banner, String message) {
+                            Log.d("TestApp", "onBannerLoading : loaded = " +
+                                    banner.isLoaded());
+                        }
+
+                        @Override
+                        public void onBannerRefreshed(SmartBannerAdView banned, String
+                                message) {
+                            Log.d("TestApp", "onBannerRefreshed");
+                        }
+
+                        @Override
+                        public void onBannerImpression(SmartBannerAdView banner) {
+                            Log.d("TestApp", "onBannerImpression");
+                        }
+
+                        @Override
+                        public void onBannerFailed(SmartBannerAdView banner, String message) {
+                            Log.d("TestApp", "onBannerFailed msg:" + message);
+                        }
+
+                        @Override
+                        public void onBannerClicked(SmartBannerAdView banner) {
+                            Log.d("TestApp", "onBannerClicked");
+                        }
+                    });
+            smartBannerAdView.load(this);
+        }
+
+
         galleryRecycler = findViewById(R.id.galleryRecycler);
 
         path = getIntent().getStringExtra("path");
-
-        mAdView = findViewById(R.id.galleryBanner);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("B5C6779005B7324A3BB20FCA3B71F16B")
-                .addTestDevice("60002D3BFD4805ED630948C1F39A1426").build();
-        mAdView.loadAd(adRequest);
 
         galleryRecycler.setLayoutManager(new GridLayoutManager(this, 3));
         galleryRecycler.setHasFixedSize(true); // Helps improve performance
@@ -95,6 +130,11 @@ public class GalleryActivity extends AppCompatActivity {
                     }
                 }));
 
+    }
+
+    private void remove_ad() {
+        SmartBannerAdView ad = findViewById(R.id.gallery_banner_ad_view);
+        ad.setVisibility(View.GONE);
     }
 
     public void goBack(View view) {

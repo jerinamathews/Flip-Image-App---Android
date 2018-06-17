@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Vibrator;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,16 +24,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adclient.android.sdk.nativeads.view.SmartBannerAdView;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.io.File;
 
 public class EditSavedActivity extends AppCompatActivity {
 
     ImageView imgView;
-    private AdView mAdView1,mAdView2;
     ImageButton wtsp,fb,instgrm,shr;
     Button viewImg;
     private Vibrator vib;
@@ -55,6 +53,45 @@ public class EditSavedActivity extends AppCompatActivity {
                     .into(imgView);
         }
 
+        if(getSharedPreferences("Flip_Pref",MODE_PRIVATE).getBoolean("remove_ad",false)){
+            remove_ad();
+        }
+        else {
+
+            final SmartBannerAdView smartBannerAdView =
+                    findViewById(R.id.save_banner_ad_view);
+            smartBannerAdView.setListener(new
+                                                  SmartBannerAdView.SmartBannerAdViewListener() {
+                                                      @Override
+                                                      public void onBannerLoading(SmartBannerAdView banner, String message) {
+                                                          Log.d("App", "onBannerLoading : loaded = " +
+                                                                  banner.isLoaded());
+                                                      }
+
+                                                      @Override
+                                                      public void onBannerRefreshed(SmartBannerAdView banned, String
+                                                              message) {
+                                                          Log.d("App", "onBannerRefreshed");
+                                                      }
+
+                                                      @Override
+                                                      public void onBannerImpression(SmartBannerAdView banner) {
+                                                          Log.d("App", "onBannerImpression");
+                                                      }
+
+                                                      @Override
+                                                      public void onBannerFailed(SmartBannerAdView banner, String message) {
+                                                          Log.d("App", "onBannerFailed msg:" + message);
+                                                      }
+
+                                                      @Override
+                                                      public void onBannerClicked(SmartBannerAdView banner) {
+                                                          Log.d("App", "onBannerClicked");
+                                                      }
+                                                  });
+            smartBannerAdView.load(this);
+        }
+
         vib = (Vibrator)getSystemService(VIBRATOR_SERVICE);
         SharedPreferences pref = getSharedPreferences("Flip_Pref",MODE_PRIVATE);
         hapticFeed = pref.getBoolean("hapticFeed",true);
@@ -66,13 +103,6 @@ public class EditSavedActivity extends AppCompatActivity {
         }else if(count!=-1) {
             pref.edit().putInt("save_count",count+1).apply();
         }
-        mAdView1 = findViewById(R.id.editPageBanner);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("B5C6779005B7324A3BB20FCA3B71F16B").build();
-        mAdView1.loadAd(adRequest);
-
-        mAdView2 = findViewById(R.id.editPageRectangle);
-        AdRequest adRequest2 = new AdRequest.Builder().addTestDevice("B5C6779005B7324A3BB20FCA3B71F16B").build();
-        mAdView2.loadAd(adRequest2);
         wtsp = findViewById(R.id.wtsp);
         fb = findViewById(R.id.facbk);
         instgrm = findViewById(R.id.instgrm);
@@ -175,6 +205,14 @@ public class EditSavedActivity extends AppCompatActivity {
 
 
     }
+
+    private void remove_ad() {
+        SmartBannerAdView ad = findViewById(R.id.save_banner_ad_view);
+        ad.setVisibility(View.GONE);
+        ConstraintLayout cAd = findViewById(R.id.customAd);
+        cAd.setVisibility(View.GONE);
+    }
+
     public void showRateDialog() {
         final SharedPreferences.Editor editor = getSharedPreferences("Flip_Pref",MODE_PRIVATE).edit();
         String APP_TITLE ="Flip Image";
@@ -223,5 +261,9 @@ public class EditSavedActivity extends AppCompatActivity {
 
     public void goBack(View view) {
         finish();
+    }
+
+    public void gotoPlaystore(View view) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.rectfy.linkedout")));
     }
 }

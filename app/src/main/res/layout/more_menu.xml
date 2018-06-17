@@ -22,18 +22,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/removeAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remove Ads"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:padding="10dp"
+        app:layout_constraintStart_toStartOf="@+id/hapticFeed"
+        app:layout_constraintTop_toBottomOf="@+id/hapticFeed" />
+
+
+    <TextView
         android:id="@+id/rate_us"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="8dp"
         android:padding="10dp"
+        android:text="Rate us"
         android:textColor="@android:color/white"
         android:textSize="15sp"
-        android:text="Rate us"
         app:layout_constraintEnd_toEndOf="@+id/hapticFeed"
         app:layout_constraintStart_toStartOf="@+id/hapticFeed"
-        app:layout_constraintTop_toBottomOf="@+id/hapticFeed" />
+        app:layout_constraintTop_toBottomOf="@+id/removeAd" />
 
 </android.support.constraint.ConstraintLayout>

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
     tools:context="com.rectfy.flip.EditSavedActivity">
 
     <ImageButton
@@ -49,15 +48,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/btn_bg"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
         android:text="@string/view_image"
         android:textAllCaps="false"
         android:textColor="#2222bc"
         app:layout_constraintBottom_toBottomOf="@+id/imgThumb"
-        app:layout_constraintStart_toEndOf="@+id/imgThumb"
+        app:layout_constraintStart_toStartOf="@+id/image_saved_text"
         app:layout_constraintTop_toBottomOf="@+id/image_saved_text" />
 
     <ImageButton
@@ -115,29 +116,108 @@
         app:layout_constraintTop_toTopOf="@+id/instgrm"
         android:layout_marginLeft="8dp" />
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/editPageRectangle"
-        android:layout_width="wrap_content"
+    <com.adclient.android.sdk.nativeads.view.SmartBannerAdView
+        android:id="@+id/save_banner_ad_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="MEDIUM_RECTANGLE"
-        ads:adUnitId="ca-app-pub-3534792353435863/8516564056"
-        ads:layout_constraintBottom_toTopOf="@+id/editPageBanner"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"
-        ads:layout_constraintTop_toBottomOf="@+id/facbk" />
+        android:layout_marginTop="16dp"
+        app:adPlacementKey="8c2cfc50ef9309ce30db532165776817"
+        app:adServerUrl="https://appservestar.com/"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/facbk"
+        app:refreshInterval="30"
+        app:smartBannerAdSize="SMART_BANNER_FULL_WIDTH" />
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/editPageBanner"
-        android:layout_width="wrap_content"
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-3534792353435863/7703898030"
-        ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"/>
+        android:layout_marginTop="8dp"
+        android:onClick="gotoPlaystore"
+        android:id="@+id/customAd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/save_banner_ad_view">
+
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/adlogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/ad_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="LinkedOut"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            app:layout_constraintStart_toEndOf="@+id/app_logo"
+            app:layout_constraintTop_toTopOf="@+id/app_logo" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_thin"
+            android:text="Event based contact managing \napp"
+            android:textColor="#ffffff"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@+id/ad_name"
+            app:layout_constraintTop_toBottomOf="@+id/ad_name" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="18dp"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="center"
+            android:text="Remember people based on where\nand when you met them and\ndo better follow ups"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_bg"
+            android:onClick="gotoPlaystore"
+            android:paddingEnd="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingStart="16dp"
+            android:text="INSTALL NOW"
+            android:textAllCaps="false"
+            android:textColor="#2222bc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.constraint.ConstraintLayout>

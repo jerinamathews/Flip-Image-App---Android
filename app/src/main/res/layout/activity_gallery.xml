@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
     android:paddingTop="10dp">
 
     <ImageButton
@@ -23,12 +22,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/activityTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="@string/gallery"
+        android:textColor="#ffffff"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/backBtn"
@@ -43,25 +42,25 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/galleryBanner"
+        app:layout_constraintBottom_toTopOf="@+id/gallery_banner_ad_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backBtn" />
 
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/galleryBanner"
-        android:layout_width="wrap_content"
+    <com.adclient.android.sdk.nativeads.view.SmartBannerAdView
+        android:id="@+id/gallery_banner_ad_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-3534792353435863/8045790760"
-        ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"/>
+        app:adPlacementKey="8c2cfc50ef9309ce30db532165776817"
+        app:adServerUrl="https://appservestar.com/"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:refreshInterval="30"
+        app:smartBannerAdSize="SMART_BANNER_FULL_WIDTH" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>

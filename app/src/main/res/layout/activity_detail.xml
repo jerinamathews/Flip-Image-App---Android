@@ -4,22 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
     tools:context="com.rectfy.flip.DetailActivity">
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/viewPageBanner"
-        android:layout_width="wrap_content"
+
+    <com.adclient.android.sdk.nativeads.view.SmartBannerAdView
+        android:id="@+id/show_banner_ad_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-3534792353435863/3148687305"
-        ads:layout_constraintTop_toTopOf="parent"
-        ads:layout_constraintEnd_toEndOf="parent"
-        ads:layout_constraintStart_toStartOf="parent"/>
+        app:adPlacementKey="8c2cfc50ef9309ce30db532165776817"
+        app:adServerUrl="https://appservestar.com/"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:refreshInterval="30"
+        app:smartBannerAdSize="SMART_BANNER_FULL_WIDTH" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
@@ -28,23 +26,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewPageBanner" />
+        app:layout_constraintTop_toBottomOf="@+id/show_banner_ad_view" />
 
     <ImageButton
-        android:id="@+id/detail_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:onClick="goBack"
         android:padding="10dp"
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewPageBanner"
-        android:layout_marginLeft="8dp" />
+        app:layout_constraintTop_toBottomOf="@+id/show_banner_ad_view" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/detail_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#90000000"
@@ -73,7 +70,6 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageButton
-                android:id="@+id/editImg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
